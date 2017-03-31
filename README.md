@@ -1,4 +1,4 @@
-# ProjetGELE3700
-Projet accéléromètre GELE3700
+# GUI
 
-Test Test Test
+Contient les codes de l'interface graphique (Matlab).
+
