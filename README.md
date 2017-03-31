@@ -1,4 +1,3 @@
-# ProjetGELE3700
-Projet accéléromètre GELE3700
+# Code Arduino
 
-Test Test Test
+Mettre tous les fichiers de code Arduino.
