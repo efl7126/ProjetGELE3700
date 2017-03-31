@@ -7,8 +7,8 @@ Khadija,
 Aboubacar,
 Andrée-Maude,
 Samuel,
-François,
+François.
 
-Master : fichiers finaux du projet,
+Master : fichiers finaux du projet.
 
-Branches : modifications faites par chacun
+Branches : modifications faites par chacun.
