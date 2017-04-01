@@ -20,3 +20,5 @@ Quelques sites utiles :
   - https://www.invensense.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf : Datasheet du composant (MPU5060) Très Utile !!!
   
   - http://tiptopboards.free.fr/arduino_forum/viewtopic.php?f=2&t=28 : Explique le fonctionnement du gyroscope et de l'accélerometre et donne des exemples de conversions (accéleration -> vitesse -> distance).
+  
+  - https://diyhacking.com/arduino-mpu-6050-imu-sensor-tutorial/ : Arduino MPU 6050 Setup and 3D processng
