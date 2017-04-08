@@ -2,6 +2,8 @@
 
 Mettre tous les fichiers de code Arduino.
 
+  Test_com.ino : contient toute les améliorations ajoutées au codes le vendredi 5/4/2017.
+
 Le dossier compresser Arduino-MPU6050-master.zip comprend la bibliotheque et les exemples permettant d'avoir les données de l'accélérometre et du gyroscope.
 
 L'instruction suivante permet de modifier le range de mesure de l'accelerometre : "mpu.setRange(MPU6050_RANGE_16G);"
