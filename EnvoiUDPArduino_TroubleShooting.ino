@@ -128,7 +128,8 @@ void setup()
 void loop()
 {
 
-  int indiceTableau = 0, (ts_BufferDonnees.longueur) = 0;
+  int indiceTableau = 0;
+  (ts_BufferDonnees.longueur) = 0;
 
   while(indiceTableau < SIZETABLEAU)
   {  
