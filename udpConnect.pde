@@ -14,37 +14,129 @@
 
 // import UDP library
 import hypermedia.net.*;
-
+import de.bezier.data.sql.*;
 
 UDP udp;  // define the UDP object
+MySQL msql;
+
+boolean udpActif = false;
+PFont f;
+int i = 0;
 
 /**
  * init
  */
 void setup() {
 
-  // create a new datagram connection on port 6000
-  // and wait for incomming message
-  udp = new UDP( this, 6000 );
-  //udp.log( true ); 		// <-- printout the connection activity
-  udp.listen( true );
   
+  if(udpActif)
+  {    
+    
+    String ip       = "10.5.64.33";  // the remote IP address
+    int port        = 2640;    // the destination port
+    
+    // create a new datagram connection on port 6000
+    // and wait for incomming message
+    udp = new UDP( this, port);
+    //udp.log( true ); 		// <-- printout the connection activity
+    udp.listen( true );
+    
+  }
   
+    // ================ GUI ================================== 
   
-  
+    size(300, 220);  
+   
+    f = createFont("Arial", 16);
+    
+    
+    // ================ MySQL ================================ 
+    
+    String user     = "root";
+    String pass     = "Poseidon1242";
+    String database = "acceleration";
+    
+    msql = new MySQL( this, "localhost", database, user, pass );
+    
+    if ( msql.connect() )
+    {
+     
+        msql.query( "INSERT INTO `acceleration` VALUES (NULL, 1, NULL, 1,1,1,1,1,1)");
+     
+    }
+    else
+    {
+        // connection failed !
+        
+        // - check your login, password
+        // - check that your server runs on localhost and that the port is set right
+        // - try connecting through other means (terminal or console / MySQL workbench / ...)
+        println( "Connection failed" );
+    }
   
 }
 
 //process events
 void draw() {
 
-   
+  // ================ GUI ================================== 
+
+  background(255);  
+  int indent = 25;  
+
+  // Set the font and fill for text  
+  textFont(f);  
+  fill(0);  
+
+  i++;
+  // Display everything  
+  fill(0, 102, 153);
+  text("Mesures enregistrées", indent, 40);
+  fill(0, 0, 0);
+  text("Accélération X : ", indent, 80);
+  text(i, indent + 130, 80);
+  text("Accélération Y : ", indent, 100);
+  text(i, indent + 130, 100);
+  text("Accélération Z : ", indent, 120);
+  text(i, indent + 130, 120);
+  text("Gyroscope X : ", indent, 140);
+  text(i, indent + 130, 140);
+  text("Gyroscope Y : ", indent, 160);
+  text(i, indent + 130, 160);
+  text("Gyroscope Z : ", indent, 180);
+  text(i, indent + 130, 180);
+  
+  
+  // ================ UDP ================================== 
+  
+  if(udpActif)
+  {       
     String ip       = "10.5.64.33";  // the remote IP address
     int port        = 2640;    // the destination port
     
     String message = "55";
     udp.send( message, ip, port );
+  }
 
+  // ================ MySQL ================================== 
+  
+    if ( msql.connect() )
+    {
+     
+        msql.query( "INSERT INTO `acceleration` VALUES (NULL, 1, NULL, %s,1,1,1,1,1)",i);
+     
+    }
+    else
+    {
+        // connection failed !
+        
+        // - check your login, password
+        // - check that your server runs on localhost and that the port is set right
+        // - try connecting through other means (terminal or console / MySQL workbench / ...)
+        println( "Connection failed" );
+    }
+  
+    delay(100); // Delai pour faire une requete a la base de donnees
 }
 
 /** 
@@ -78,9 +170,26 @@ void receive( byte[] data, String ip, int port ) {	// <-- extended handler
   println( "receive: \""+message+"\" from "+ip+" on port "+port );
   */
   
-  for(int i = 0; i<10; i++)
+  for(int i = 0; i < 32; i++)
   {
-    println(data[i]);
+    byte[] byte4Array = new byte[4];
+    
+    int debut = i;
+    
+    for(int j = 0; j < 4; j++)
+    {
+      byte4Array[j] = data[(debut*4) + j];
+    }
+    
+    int asInt = (byte4Array[0] & 0xFF) 
+            | ((byte4Array[1] & 0xFF) << 8) 
+            | ((byte4Array[2] & 0xFF) << 16) 
+            | ((byte4Array[3] & 0xFF) << 24);
+    
+    float asFloat = Float.intBitsToFloat(asInt);
+    
+    println(asFloat);
+    
   }
   
 }
