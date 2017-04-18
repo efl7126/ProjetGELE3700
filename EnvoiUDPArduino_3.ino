@@ -135,12 +135,19 @@ void loop()
   {  
       Vector rawAccel = mpu.readRawAccel();           // Recueil de l'accélération brute dans un objet de classe Vector
       // Vector normAccel = mpu.readNormalizeAccel(); // Recueil de l'accélération normalisée dans un objet de classe Vector
+      //Vector rawGyro = mpu.readRawGyro();           // Recueil des données gyroscope brute dans un objet de classe Vector
+      //Vector normGyro = mpu.readNormalizeGyro();    // Recueil des données gyroscope normalisée dans un objet de classe Vector
+    
     
       // Valeurs d'accélération
       ts_BufferDonnees.valeursX[indiceTableau] = rawAccel.XAxis;
       ts_BufferDonnees.valeursY[indiceTableau] = rawAccel.YAxis;
       ts_BufferDonnees.valeursZ[indiceTableau] = rawAccel.ZAxis;
-
+      // Valeurs du gyroscope
+      /*ts_BufferDonnees.valeursX[indiceTableau] = rawGyro.XAxis;
+      ts_BufferDonnees.valeursY[indiceTableau] = rawGyro.YAxis;
+      ts_BufferDonnees.valeursZ[indiceTableau] = rawGyro.ZAxis;*/
+    
       indiceTableau++;
       (ts_BufferDonnees.longueur)++;
 
@@ -285,19 +292,24 @@ void udpOutBuffer(BufferDonnees &bufferDonnees)
 {
 
   Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-  float marqueur = 9999; // Marqueur qui separe chaque temps de donnees
-
+  float marqueur = 9999; // Marqueur qui separe chaque temps de donnees accélerometre
+  //float marqueur = 9999; // Marqueur qui separe chaque temps de donnees gyroscope
   for(int indiceTableau = 0; indiceTableau < NBDONNEESMAXENVOI; indiceTableau++)
   {
 
     
     
     
-    udpOutFloat(marqueur);
-    udpOutFloat((float)ts_BufferDonnees.valeursX[indiceTableau]);
-    udpOutFloat((float)ts_BufferDonnees.valeursY[indiceTableau]);
-    udpOutFloat((float)ts_BufferDonnees.valeursZ[indiceTableau]);
+    udpOutFloat(marqueur);                                          //marqueur accelerometre
+    udpOutFloat((float)ts_BufferDonnees.valeursX[indiceTableau]);   //Valeur X accelerometre
+    udpOutFloat((float)ts_BufferDonnees.valeursY[indiceTableau]);   //Valeur Y accelerometre
+    udpOutFloat((float)ts_BufferDonnees.valeursZ[indiceTableau]);   //Valeur Z accelerometre
 
+    /*udpOutFloat(marqueur);                                          //marqueur gyroscope
+    udpOutFloat((float)ts_BufferDonnees.valeursX[indiceTableau]);   //Valeur X gyroscope
+    udpOutFloat((float)ts_BufferDonnees.valeursY[indiceTableau]);   //Valeur Y gyroscope
+    udpOutFloat((float)ts_BufferDonnees.valeursZ[indiceTableau]);   //Valeur Z gyroscope*/
+    
       
 
 #ifdef TESTBUFFER      
@@ -402,6 +414,24 @@ void checkSettings()
   Serial.print(mpu.getAccelOffsetY());
   Serial.print(" / ");
   Serial.println(mpu.getAccelOffsetZ());
+  
+  Serial.println();
+  
+  Serial.print(" * Gyroscope:         ");
+  switch(mpu.getScale())
+  {
+    case MPU6050_SCALE_2000DPS:        Serial.println("2000 dps"); break;
+    case MPU6050_SCALE_1000DPS:        Serial.println("1000 dps"); break;
+    case MPU6050_SCALE_500DPS:         Serial.println("500 dps"); break;
+    case MPU6050_SCALE_250DPS:         Serial.println("250 dps"); break;
+  } 
+  
+  Serial.print(" * Gyroscope offsets: ");
+  Serial.print(mpu.getGyroOffsetX());
+  Serial.print(" / ");
+  Serial.print(mpu.getGyroOffsetY());
+  Serial.print(" / ");
+  Serial.println(mpu.getGyroOffsetZ());
   
   Serial.println();
 }
