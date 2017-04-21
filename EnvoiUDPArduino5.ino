@@ -30,12 +30,12 @@
 
 struct BufferDonnees
 {
-  double valeursX[SIZETABLEAU] = {0};
-  double valeursY[SIZETABLEAU] = {0};
-  double valeursZ[SIZETABLEAU] = {0};
-  double valeursXGyro[SIZETABLEAU] = {0};
-  double valeursYGyro[SIZETABLEAU] = {0};
-  double valeursZGyro[SIZETABLEAU] = {0};
+  uint16_t valeursX[SIZETABLEAU] = {0};
+  uint16_t valeursY[SIZETABLEAU] = {0};
+  uint16_t valeursZ[SIZETABLEAU] = {0};
+  uint16_t valeursXGyro[SIZETABLEAU] = {0};
+  uint16_t valeursYGyro[SIZETABLEAU] = {0};
+  uint16_t valeursZGyro[SIZETABLEAU] = {0};
   int longueur = 0;
   int marqueur = 9999;
   
@@ -50,9 +50,8 @@ void udpOutDouble(double val0);
 void afficherStructure(BufferDonnees &StructDonnees);
 void afficherBuffer(BufferDonnees &StructDonnees);
 void udpOutBuffer(BufferDonnees &bufferDonnees);
-void udpOutBuffer2(BufferDonnees &bufferDonnees);
+void udpOutUINT32(uint32_t val0);
 
-r
 MPU6050 mpu; 
 
 // Nom du reseau
@@ -295,25 +294,36 @@ void udpOutFloat(float val0)
     //Udp.endPacket();
 }
 
+void udpOutUINT32(uint32_t val0)
+{
+            
+    byte* array = (byte*) &val0;  
+    for(int i=0; i<4 ;i++)  // Il y a 4 bytes dans un float
+    {
+      char c00=*(array+i);  
+      Udp.write(c00);       // Ecrit des bytes a chaque fois
+    }   
+    //Udp.endPacket();
+}
 
 void udpOutBuffer(BufferDonnees &bufferDonnees)
 {
 
   Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-  float marqueur = 9999; // Marqueur qui separe chaque temps de donnees accélerometre
+  uint32_t marqueur = 9999; // Marqueur qui separe chaque temps de donnees accélerometre
 
   for(int indiceTableau = 0; indiceTableau < NBDONNEESMAXENVOI; indiceTableau++)
   {    
     
-    udpOutFloat(marqueur);                                          //marqueur accelerometre
-    udpOutFloat((float)(ts_BufferDonnees.valeursX[indiceTableau]));   //Valeur X accelerometre
-    udpOutFloat((float)(ts_BufferDonnees.valeursY[indiceTableau]));   //Valeur Y accelerometre
-    udpOutFloat((float)(ts_BufferDonnees.valeursZ[indiceTableau]));   //Valeur Z accelerometre
+    udpOutUINT32(marqueur);                                          //marqueur accelerometre
+    udpOutUINT32((uint32_t)(ts_BufferDonnees.valeursX[indiceTableau]));   //Valeur X accelerometre
+    udpOutUINT32((uint32_t)(ts_BufferDonnees.valeursY[indiceTableau]));   //Valeur Y accelerometre
+    udpOutUINT32((uint32_t)(ts_BufferDonnees.valeursZ[indiceTableau]));   //Valeur Z accelerometre
 
-    udpOutFloat(marqueur);                                          //marqueur gyroscope
-    udpOutFloat((float)(ts_BufferDonnees.valeursXGyro[indiceTableau]));   //Valeur X gyroscope
-    udpOutFloat((float)(ts_BufferDonnees.valeursYGyro[indiceTableau]));   //Valeur Y gyroscope
-    udpOutFloat((float)(ts_BufferDonnees.valeursZGyro[indiceTableau]));   //Valeur Z gyroscope
+    udpOutUINT32(marqueur);                                          //marqueur gyroscope
+    udpOutUINT32((uint32_t)(ts_BufferDonnees.valeursXGyro[indiceTableau]));   //Valeur X gyroscope
+    udpOutUINT32((uint32_t)(ts_BufferDonnees.valeursYGyro[indiceTableau]));   //Valeur Y gyroscope
+    udpOutUINT32((uint32_t)(ts_BufferDonnees.valeursZGyro[indiceTableau]));   //Valeur Z gyroscope
         
 
 #ifdef TESTBUFFER      
@@ -328,56 +338,7 @@ void udpOutBuffer(BufferDonnees &bufferDonnees)
 }
 
 
-void udpOutBuffer2(BufferDonnees &bufferDonnees)
-{
 
-  for(int indiceTableau = 0; indiceTableau < (bufferDonnees.longueur); indiceTableau++)
-  {
-
-      for(int i = 0; i < 4; i++)
-      {
-
-        if(i == 0)
-        {
-            Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-            float marqueur = 9999; // Marqueur qui separe chaque temps de donnees
-            udpOutFloat(marqueur);
-            Serial.print(marqueur);
-            Udp.endPacket();    // Fonction d'envoi du paquet
-          
-        }
-        else if(i == 1)
-        {
-            Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-           
-            udpOutFloat((float)ts_BufferDonnees.valeursX[indiceTableau]);
-            Serial.print((float)ts_BufferDonnees.valeursX[indiceTableau]);
-            Udp.endPacket();    // Fonction d'envoi du paquet
-        }   
-        else if(i == 2)
-        {   
-          
-            Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-            udpOutFloat((float)ts_BufferDonnees.valeursY[indiceTableau]);
-            Serial.print((float)ts_BufferDonnees.valeursY[indiceTableau]);
-            Udp.endPacket();    // Fonction d'envoi du paquet
-        }
-        else if(i == 3)
-        {
-            Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-           
-            udpOutFloat((float)ts_BufferDonnees.valeursZ[indiceTableau]);
-            Serial.print((float)ts_BufferDonnees.valeursZ[indiceTableau]);
-            Udp.endPacket();    // Fonction d'envoi du paquet        
-        }
-        
-
-      }
-    
-    
-  }
-            
-}
 
 
 
